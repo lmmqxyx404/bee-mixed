@@ -21,12 +21,16 @@ else
 endif
 
 #容器环境前后端共同打包
-build: build-web
+# todo: 补充前端 build-web
+build:  build-server
 
 #容器环境打包前端
 build-web:
 	docker run --name build-web-local --rm -v $(shell pwd):/go/src/${PROJECT_NAME} -w /go/src/${PROJECT_NAME} ${BUILD_IMAGE_WEB} make build-web-local
 
+#容器环境打包后端
+build-server:
+	docker run --name build-server-local --rm -v $(shell pwd):/go/src/${PROJECT_NAME} -w /go/src/${PROJECT_NAME} ${BUILD_IMAGE_SERVER} make build-server-local
 
 #本地环境打包前端
 build-web-local:
@@ -34,3 +38,11 @@ build-web-local:
 	&& yarn install && yarn build
 # 不设置国内代理
 # && yarn config set registry http://mirrors.cloud.tencent.com/npm/ 
+
+
+#本地环境打包后端
+build-server-local:
+	@cd server/ && if [ -f "server" ];then rm -rf server; else echo "OK build-server-local!"; fi \
+	&& go env -w GO111MODULE=on && go env -w GOPROXY=https://goproxy.cn,direct \
+	&& go env -w CGO_ENABLED=0 && go env  && go mod tidy \
+	&& go build -buildvcs=false -ldflags "-B 0x$(shell head -c20 /dev/urandom|od -An -tx1|tr -d ' \n') -X main.Version=${TAGS_OPT}" -v
