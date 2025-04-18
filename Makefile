@@ -21,8 +21,8 @@ else
 endif
 
 #容器环境前后端共同打包
-# todo: 补充前端 build-web
-build:  build-server
+build:  build-web build-server
+	docker run --name build-local --rm -v $(shell pwd):/go/src/${PROJECT_NAME} -w /go/src/${PROJECT_NAME} ${BUILD_IMAGE_SERVER} make build-local
 
 #容器环境打包前端
 build-web:
@@ -31,6 +31,12 @@ build-web:
 #容器环境打包后端
 build-server:
 	docker run --name build-server-local --rm -v $(shell pwd):/go/src/${PROJECT_NAME} -w /go/src/${PROJECT_NAME} ${BUILD_IMAGE_SERVER} make build-server-local
+
+#本地环境打包前后端
+build-local:
+	if [ -d "build" ];then rm -rf build; else echo "OK!"; fi \
+	&& if [ -f "/.dockerenv" ];then echo "OK!"; else  make build-web-local && make build-server-local; fi \
+	&& mkdir build && cp -r web/dist build/ && cp server/server build/ && cp -r server/resource build/resource 
 
 #本地环境打包前端
 build-web-local:
@@ -46,3 +52,6 @@ build-server-local:
 	&& go env -w GO111MODULE=on && go env -w GOPROXY=https://goproxy.cn,direct \
 	&& go env -w CGO_ENABLED=0 && go env  && go mod tidy \
 	&& go build -buildvcs=false -ldflags "-B 0x$(shell head -c20 /dev/urandom|od -An -tx1|tr -d ' \n') -X main.Version=${TAGS_OPT}" -v
+
+# run-dev:
+#	docker-compose -f deploy/docker-compose/docker-compose-dev.yaml up
