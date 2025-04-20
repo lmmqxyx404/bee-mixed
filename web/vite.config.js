@@ -14,6 +14,7 @@ import fullImportPlugin from './vitePlugin/fullImport/fullImport.js'
 import { svgBuilder } from 'vite-auto-import-svg'
 import { AddSecret } from './vitePlugin/secret'
 // @see https://cn.vitejs.dev/config/
+/** @type {import('vite').UserConfig} */
 export default ({
   command,
   mode
@@ -62,6 +63,15 @@ export default ({
       'process.env': {}
     },
     server: {
+      // note host hmr watch open
+      host: '0.0.0.0',
+      hmr: true, // 是否开启热更新
+      watch: {
+        usePolling: true, // 是否开启轮询
+        interval: 10000, // 轮询间隔时间
+        ignored: ['!**/node_modules/your-module-name/**', '**/node_modules/**'], // 需要忽略的文件
+      },
+
       // 如果使用docker-compose开发模式，设置为false
       open: false,
       port: process.env.VITE_CLI_PORT,
