@@ -20,6 +20,11 @@ TAGS_OPT            = latest
 else
 endif
 
+ifeq ($(SERVICE_NAME),)
+SERVICE_NAME            = web
+else
+endif
+
 #容器环境前后端共同打包
 build:  build-web build-server
 	docker run --name build-local --rm -v $(shell pwd):/go/src/${PROJECT_NAME} -w /go/src/${PROJECT_NAME} ${BUILD_IMAGE_SERVER} make build-local
@@ -53,5 +58,9 @@ build-server-local:
 	&& go env -w CGO_ENABLED=0 && go env  && go mod tidy \
 	&& go build -buildvcs=false -ldflags "-B 0x$(shell head -c20 /dev/urandom|od -An -tx1|tr -d ' \n') -X main.Version=${TAGS_OPT}" -v
 
-# run-dev:
-#	docker-compose -f deploy/docker-compose/docker-compose-dev.yaml up
+run-dev:
+	docker-compose -f deploy/docker-compose/docker-compose-dev.yaml up
+
+restart:
+	@echo "restart the service ${SERVICE_NAME}..." && \
+	docker-compose -f deploy/docker-compose/docker-compose-dev.yaml restart ${SERVICE_NAME}
