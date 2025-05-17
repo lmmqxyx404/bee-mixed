@@ -17,3 +17,6 @@ yunlaba-sdk
 
 # todo
 ## 维护地址信息的sql表 要正确导入
+
+
+不需要专门的的去启动 api 服务，server 插件支持对应的服务
