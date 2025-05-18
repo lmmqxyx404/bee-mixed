@@ -52,6 +52,7 @@ build-web-local:
 
 
 #本地环境打包后端
+# 生成随机指纹
 build-server-local:
 	@cd server/ && if [ -f "server" ];then rm -rf server; else echo "OK build-server-local!"; fi \
 	&& go env -w GO111MODULE=on && go env -w GOPROXY=https://goproxy.cn,direct \
@@ -60,6 +61,9 @@ build-server-local:
 
 run-dev:
 	docker-compose -f deploy/docker-compose/docker-compose-dev.yaml up
+
+run-prod-local:
+	docker-compose -f deploy/docker-compose/docker-compose.yaml up --build
 
 restart:
 	@echo "restart the service ${SERVICE_NAME}..." && \
