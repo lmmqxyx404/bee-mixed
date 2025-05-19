@@ -3,6 +3,11 @@ package service
 import (
 	"context"
 	"fmt"
+	"io/ioutil"
+	"strings"
+	"sync"
+	"time"
+
 	"gitee.com/stuinfer/bee-api/config"
 	"gitee.com/stuinfer/bee-api/db"
 	"gitee.com/stuinfer/bee-api/enum"
@@ -19,10 +24,6 @@ import (
 	"github.com/spf13/cast"
 	"go.uber.org/zap"
 	"gorm.io/gorm"
-	"io/ioutil"
-	"strings"
-	"sync"
-	"time"
 )
 
 type PaySrv struct {
@@ -300,7 +301,8 @@ func (fee *PaySrv) GetWxAppPayInfo(c context.Context, money decimal.Decimal, rem
 	}
 	switch payType {
 	case enum.PayNextActionTypePayOrder:
-		orderId := nextActionJson.Get("id").MustString()
+		// 前端传的是 number
+		orderId := nextActionJson.Get("id").MustInt64()
 		orderInfo, err := GetOrderSrv().GetOrderByOrderId(c, cast.ToInt64(orderId))
 		if err != nil {
 			return nil, err
@@ -328,6 +330,9 @@ func (fee *PaySrv) GetWxAppPayInfo(c context.Context, money decimal.Decimal, rem
 		return nil, err
 	}
 
+	// 计算总金额的最简写法，money 单位是元，乘 100 得到分，然后取整
+	totalFee := money.Mul(decimal.NewFromInt(100)).IntPart()
+
 	wxResp, err := wxPayClient.V3TransactionJsapi(c, gopay.BodyMap{
 		"mchid":        wxPayConfig.MchId,
 		"out_trade_no": payOrderId,
@@ -335,7 +340,7 @@ func (fee *PaySrv) GetWxAppPayInfo(c context.Context, money decimal.Decimal, rem
 		"description":  util.IF(remark != "", remark, "订单支付"),
 		"notify_url":   fee.getWxPayNotifyUrl(c, &wxPayConfig),
 		"amount": map[string]interface{}{
-			"total":    money.Mul(decimal.NewFromInt(100)).StringFixed(0),
+			"total":    totalFee, // 整数类型，不要再用 StringFixed
 			"currency": "CNY",
 		},
 		"time_expire": time.Now().Add(time.Hour * 1).Format(time.RFC3339), // 限制一小时内支付
