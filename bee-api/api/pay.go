@@ -20,6 +20,7 @@ type PayApi struct {
 	BaseApi
 }
 
+// 微信支付
 func (api PayApi) WxApp(c *gin.Context) {
 	money, err := decimal.NewFromString(c.PostForm("money"))
 	if err != nil {
