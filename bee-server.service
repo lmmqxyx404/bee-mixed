@@ -1,0 +1,17 @@
+[Unit]
+After=network.target nss-lookup.target
+
+[Service]
+User=root
+WorkingDirectory=/root
+CapabilityBoundingSet=CAP_NET_ADMIN CAP_NET_BIND_SERVICE
+AmbientCapabilities=CAP_NET_ADMIN CAP_NET_BIND_SERVICE
+# todo: 自行修改
+ExecStart=/root/server -c config.yaml
+Restart=on-failure
+RestartSec=10
+LimitNPROC=512
+LimitNOFILE=infinity
+
+[Install]
+WantedBy=multi-user.target
