@@ -3,14 +3,15 @@ package model
 import (
 	"bufio"
 	"errors"
+	"io"
+	"log"
+	"os"
+
 	config2 "gitee.com/stuinfer/bee-api/config"
 	"gitee.com/stuinfer/bee-api/db"
 	"gitee.com/stuinfer/bee-api/logger"
 	"go.uber.org/zap"
 	"gorm.io/gorm"
-	"io"
-	"log"
-	"os"
 )
 
 var AllModel = []interface{}{
@@ -102,8 +103,10 @@ func InitDemoData() error {
 }
 
 func initBeeRegion() {
-	// 打开文件
-	file, err := os.Open("data/bee-region.sql")
+	// todo: 打开地址库文件  似乎文件过大 会导致持续的报错
+	// note: 在数据库容器中使用 source 会更好
+	file, err := os.Open("./bee_region.sql")
+	// file, err := os.Open("data/bee-region.sql")
 	if err != nil { //文件不存在之类的
 		logger.GetLogger().Error("打开地址库文件失败", zap.Error(err))
 		return
