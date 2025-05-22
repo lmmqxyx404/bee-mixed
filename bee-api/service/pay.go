@@ -44,7 +44,10 @@ func GetPaySrv() *PaySrv {
 }
 func (fee *PaySrv) getWxPayNotifyUrl(c context.Context, wxPayConfig *model.BeeWxPayConfig) string {
 	host := util.IF(wxPayConfig.NotifyUrl == "", config.GetHost(), wxPayConfig.NotifyUrl)
-	return strings.TrimRight(host, "/") + "/" + kit.GetDomain(c) + "/notify/wx/pay"
+
+	notifyUrl := strings.TrimRight(host, "/") + "/" + kit.GetDomain(c) + "/notify/wx/pay"
+	logger.GetLogger().Info("微信支付回调地址", zap.String("host", host), zap.String("notifyUrl", notifyUrl))
+	return notifyUrl
 }
 
 // WxNotify 微信支付回调网关
@@ -57,7 +60,7 @@ func (fee *PaySrv) WxNotify(c context.Context, ip string, req *wechat.V3NotifyRe
 	}
 	// 获取配置
 	var wxPayConfig model.BeeWxPayConfig
-	if err := db.GetDB().Where("user_id = ? and is_deleted = 0").Take(&wxPayConfig).Error; err != nil {
+	if err := db.GetDB().Where("user_id = ? and is_deleted = 0", kit.GetUserId(c)).Take(&wxPayConfig).Error; err != nil {
 		return errors.Wrap(err, "获取微信配置失败！")
 	}
 
@@ -140,7 +143,7 @@ func (fee *PaySrv) dealPayNotify(c context.Context, ip string, payResult *wechat
 	case enum.PayNextActionTypeRecharge:
 		// 计算充值优惠
 		var shouldGetTotal decimal.Decimal
-		shouldGetTotal, err = fee.calRechargeGetAmount(c, payerTotal, payLog.Uid)
+		shouldGetTotal, err = fee.calRechargeGetAmount(c, payerTotal, payLog.UserId)
 		if err != nil {
 			return errors.Wrap(err, "计算充值优惠失败！")
 		}
@@ -159,7 +162,7 @@ func (fee *PaySrv) dealPayNotify(c context.Context, ip string, payResult *wechat
 			return nil
 		})
 	case enum.PayNextActionTypePayOrder:
-		err = GetOrderSrv().PayOrderByBalance(c, ip, payLog, nextActionJson.Get("id").MustString(), payResult.TransactionId, payerTotal)
+		err = GetOrderSrv().PayOrderByBalance(c, ip, payLog, cast.ToString(nextActionJson.Get("id").Interface()), payResult.TransactionId, payerTotal)
 	case enum.PayNextActionTypePayDirect:
 		moneyTotal, err := nextActionJson.Get("money").Float64()
 		if err != nil {
