@@ -33,12 +33,15 @@ func (beeShopGoodsSkuService *BeeShopGoodsSkuService) DeleteBeeShopGoodsSku(id s
 // DeleteBeeShopGoodsSkuByIds 批量删除商品sku记录
 // Author [piexlmax](https://github.com/piexlmax)
 func (beeShopGoodsSkuService *BeeShopGoodsSkuService) DeleteBeeShopGoodsSkuByIds(ids []string, shopUserId int) (err error) {
-	err = GetBeeDB().Model(&bee.BeeShopGoodsSku{}).Where("id = ?", ids).Where("user_id = ?", shopUserId).
+	return GetBeeDB().
+		Model(&bee.BeeShopGoodsSku{}).
+		// 改为 IN (?)，GORM 会把 ids 展开成 (id1,id2,…)
+		Where("id IN (?)", ids).
+		Where("user_id = ?", shopUserId).
 		Updates(map[string]interface{}{
 			"is_deleted":  1,
 			"date_delete": utils.NowPtr(),
 		}).Error
-	return err
 }
 
 // UpdateBeeShopGoodsSku 更新商品sku记录
