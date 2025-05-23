@@ -95,7 +95,7 @@ const formData = ref({
             price: 0,
             propertyChildIds: '',
             score: 0,
-            stores: undefined,
+            stores: 9999,
             weight: 0,
         })
 // 验证规则

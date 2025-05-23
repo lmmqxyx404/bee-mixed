@@ -227,7 +227,7 @@ const formData = ref({
             seckillBuyNumber: undefined,
             shopId: undefined,
             status: undefined,
-            stores: undefined,
+            stores: 9999,
             stores0Unsale: false,
             sellBeginTime: new Date(),
             sellEndTime: new Date(),

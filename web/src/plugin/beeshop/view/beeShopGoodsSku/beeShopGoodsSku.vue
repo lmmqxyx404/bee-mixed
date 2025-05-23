@@ -273,7 +273,7 @@ const formData = ref({
   propertyChildIds: '',
   propertyMapList: [],
   score: 0,
-  stores: undefined,
+  stores: 9999,
   weight: 0,
 })
 
@@ -447,6 +447,8 @@ const onDelete = async () => {
       })
       return
     }
+    console.log(multipleSelection.value,'value is');
+    
     multipleSelection.value &&
     multipleSelection.value.map(item => {
       ids.push(item.id)
@@ -553,7 +555,7 @@ const closeDialog = () => {
     propertyChildIds: '',
     propertyMapList: [],
     score: 0,
-    stores: undefined,
+    stores: 999,
     weight: 0,
   }
 }
