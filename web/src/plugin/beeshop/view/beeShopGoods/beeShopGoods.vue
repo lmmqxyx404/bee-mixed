@@ -399,9 +399,9 @@
                 <el-option v-for="(item,key) in beeGoodsStatus" :key="key" :label="item.label" :value="parseInt(item.value)" />
               </el-select>
             </el-form-item>
-<!--            <el-form-item label="库存:"  prop="stores" >-->
-<!--              <el-input v-model.number="formData.stores" :clearable="true" placeholder="请输入库存" />-->
-<!--            </el-form-item>-->
+           <el-form-item label="库存:"  prop="stores" >
+             <el-input v-model.number="formData.stores" :clearable="true" placeholder="请输入库存" />
+           </el-form-item>
             <el-form-item label="自动下架:"  prop="stores0Unsale" >
               <el-switch v-model="formData.stores0Unsale" active-color="#13ce66" inactive-color="#ff4949" active-text="是" inactive-text="否" clearable ></el-switch>
             </el-form-item>
@@ -518,7 +518,7 @@ const formData = ref({
         seckillBuyNumber: undefined,
         shopId: undefined,
         status: undefined,
-        stores: undefined,
+        stores: 9999,
         stores0Unsale: false,
         sellBeginTime: new Date(),
         sellEndTime: new Date(),
@@ -895,7 +895,7 @@ const closeDialog = () => {
         seckillBuyNumber: undefined,
         shopId: undefined,
         status: undefined,
-        stores: undefined,
+        stores: 9999,
         stores0Unsale: false,
         sellBeginTime: new Date(),
         sellEndTime: new Date(),
