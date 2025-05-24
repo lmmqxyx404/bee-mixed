@@ -2,6 +2,10 @@ package router
 
 import (
 	_ "embed"
+	"net/http"
+	"os"
+	"strings"
+
 	"gitee.com/stuinfer/bee-api/api"
 	config2 "gitee.com/stuinfer/bee-api/config"
 	"gitee.com/stuinfer/bee-api/enum"
@@ -11,9 +15,6 @@ import (
 	"github.com/pkg/errors"
 	"github.com/samber/lo"
 	"gorm.io/gorm"
-	"net/http"
-	"os"
-	"strings"
 )
 
 var router = gin.New()
@@ -252,6 +253,7 @@ func NewRouter() *gin.Engine {
 		orderGroup.GET("/detail", (api.OrderApi{}).Detail)
 		orderGroup.GET("/list", (api.OrderApi{}).List)
 		orderGroup.POST("/list", (api.OrderApi{}).List)
+		// TODO: 返回码不正确
 		orderGroup.POST("/pay", (api.OrderApi{}).Pay)
 		orderGroup.POST("/create", (api.OrderApi{}).Create)
 		orderGroup.POST("/close", (api.OrderApi{}).Close)
