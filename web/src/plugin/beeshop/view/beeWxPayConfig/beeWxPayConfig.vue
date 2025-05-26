@@ -32,7 +32,7 @@
         
         <el-table-column align="left" label="id字段" prop="id" width="120" />
         <el-table-column align="left" label="商户ID" prop="mchid" width="120" />
-        <el-table-column align="left" label="公众号ID" prop="appId" width="120" />
+        <el-table-column align="left" label="APPID" prop="appId" width="120" />
 <!--        <el-table-column align="left" label="APIv3Key" prop="appSecret" width="120" />-->
         <el-table-column align="left" label="商户API证书的证书序列号" prop="token" width="120" />
 <!--        <el-table-column align="left" label="v3证书私钥" prop="privateCert" width="120" />-->
@@ -88,8 +88,8 @@
             <el-form-item label="商户ID:"  prop="mchid" >
               <el-input v-model="formData.mchid" :clearable="true"  placeholder="请输入商户ID" />
             </el-form-item>
-            <el-form-item label="公众号ID:"  prop="appId" >
-              <el-input v-model="formData.appId" :clearable="true"  placeholder="请输入公众号ID" />
+            <el-form-item label="AppID:"  prop="appId" >
+              <el-input v-model="formData.appId" :clearable="true"  placeholder="请输入AppID" />
             </el-form-item>
             <el-form-item label="商户平台APIv3Key:"  prop="appSecret" >
               <el-input v-model="formData.appSecret" :clearable="true"  placeholder="请输入APIv3Key" />

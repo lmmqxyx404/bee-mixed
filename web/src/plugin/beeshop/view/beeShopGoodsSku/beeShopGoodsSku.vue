@@ -156,9 +156,11 @@
         <!--            <el-form-item label="删除时间:"  prop="dateDelete" >-->
         <!--              <el-date-picker v-model="formData.dateDelete" type="date" style="width:100%" placeholder="选择日期" :clearable="true"  />-->
         <!--            </el-form-item>-->
+        <!-- todo: 没法直接带过来 -->
         <el-form-item label="商品id:" prop="goodsId">
           <el-input v-model.number="formData.goodsId" :clearable="true" placeholder="请输入商品id" @change="onGoodsIdChange"/>
         </el-form-item>
+        
         <el-form-item label="sku编号:" prop="code">
           <el-input v-model="formData.code" :clearable="true" placeholder="请输入sku编号"/>
         </el-form-item>
