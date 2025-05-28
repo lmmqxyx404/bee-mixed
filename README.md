@@ -23,3 +23,12 @@ yunlaba-sdk
 ## 部署生产代码步骤
 ### 前端
 使用容器部署，要注意对应的打包步骤。而且真正使用的 nginx 配置是 `my.conf`
+
+导入数据库信息
+docker exec -i \
+  -e MYSQL_PWD='' \
+  container_name \
+  mysql -uroot    \
+    --verbose --show-warnings \
+  < /sqlpath \
+  2>&1 | tee import.log
