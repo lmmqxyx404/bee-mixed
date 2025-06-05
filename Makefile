@@ -4,7 +4,7 @@ SHELL = /bin/bash
 #请选择golang版本
 BUILD_IMAGE_SERVER  = golang:1.22
 #请选择node版本
-BUILD_IMAGE_WEB     = node:18
+BUILD_IMAGE_WEB     = node:20
 #项目名称
 PROJECT_NAME        = github.com/flipped-aurora/gin-vue-admin/server
 #配置文件目录
@@ -57,14 +57,24 @@ build-server-local:
 	@cd server/ && if [ -f "server" ];then rm -rf server; else echo "OK build-server-local!"; fi \
 	&& go env -w GO111MODULE=on && go env -w GOPROXY=https://goproxy.cn,direct \
 	&& go env -w CGO_ENABLED=0 && go env  && go mod tidy \
-	&& go build -buildvcs=false -ldflags "-B 0x$(shell head -c20 /dev/urandom|od -An -tx1|tr -d ' \n') -X main.Version=${TAGS_OPT}" -v
+	&& go build -buildvcs=false -ldflags "-s -w -B 0x$(shell head -c20 /dev/urandom|od -An -tx1|tr -d ' \n') -X main.Version=${TAGS_OPT}" -v -trimpath
 
 run-dev:
 	docker-compose -f deploy/docker-compose/docker-compose-dev.yaml up
 
+run-test:
+	docker-compose -f deploy/docker-compose/docker-compose-test.yaml up
+
 run-prod-local:
 	docker-compose -f deploy/docker-compose/docker-compose.yaml up --build
+
+stop:
+	docker-compose -f deploy/docker-compose/docker-compose-dev.yaml stop
 
 restart:
 	@echo "restart the service ${SERVICE_NAME}..." && \
 	docker-compose -f deploy/docker-compose/docker-compose-dev.yaml restart ${SERVICE_NAME}
+
+# demo for c++
+# prod:
+#	gcc ./zzz.c -o zzz
